@@ -1,13 +1,30 @@
-from ML.model import SentenceTransformersOnnxInference
-from sentence_transformers import SentenceTransformer
-from ML.distance import Meter
+import pytest
 import pandas as pd
+from ML.model import SentenceTransformersOnnxInference
+from ML.distance import Meter
 
+# Инициализация модели ONNX и загрузка данных
 onnx_model = SentenceTransformersOnnxInference("ML/checkpoints/sentence_transformer.onnx", "ML/tokenizer")
 df = pd.read_csv("data/df_embs.csv", sep=',')
 
-def test_embeddings_1():
-    onnx_embed = onnx_model.get_embedding(df.loc[:, 'tag'].tolist()[0])
-    meter_cosine = Meter()
-    distance = meter_cosine.get_distance(df.T[0].to_list()[1:], onnx_embed[0])
-    assert distance <= 0, f"Embedding distance is too high: {distance}"
+@pytest.mark.parametrize("index", range(10))  # Параметризация для тестирования нескольких примеров
+def test_embedding_similarity(index):
+    """
+    Тест на сравнение эмбеддингов модели ONNX и сохраненного в CSV.
+    :param index: индекс строки в CSV, для которой будет тестироваться эмбеддинг.
+    """
+
+    # Получаем тэг и его предобученный эмбеддинг из DataFrame
+    tag = df.iloc[index, 0]  # Столбец с тэгами (первый столбец)
+    saved_embedding = df.iloc[index, 1:].to_numpy()  # Остальные столбцы — это эмбеддинги
+
+    # Получаем эмбеддинг через модель ONNX
+    onnx_embedding = onnx_model.get_embedding(tag)
+
+    # Вычисляем косинусное расстояние между эмбеддингами
+    meter = Meter('cosine')
+    distance = meter.get_distance(saved_embedding, onnx_embedding[0])
+
+    # Проверка, что расстояние мало (эмбеддинги похожи)
+    assert distance < 0.01, f"Embedding distance too high for tag '{tag}': {distance}"
+
