@@ -31,7 +31,7 @@ def find_nearest_cluster(tag):
             nearest_centroid = row['centroid_emb']
             nearest_tag_group = row['centroid_tag_group']
     #расстояние с каким центроидом
-    return nearest_centroid, nearest_tag_group
+    return min_dist, nearest_tag_group
 
 
 if __name__ == "__main__":
