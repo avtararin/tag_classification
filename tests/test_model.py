@@ -3,9 +3,12 @@ import pandas as pd
 from ML.model import SentenceTransformersOnnxInference
 from ML.distance import Meter
 
-# Инициализация модели ONNX и загрузка данных
+#тесты не проходят, как грамотно импортировать модель и с какой точностью это нужно делать
+
+# Инициализация модели ONNX и загрузка эмбендингов для тестировния
 onnx_model = SentenceTransformersOnnxInference("ML/checkpoints/sentence_transformer.onnx", "ML/tokenizer")
 df = pd.read_csv("data/df_embs.csv", sep=',')
+
 
 @pytest.mark.parametrize("index", range(10))  # Параметризация для тестирования нескольких примеров
 def test_embedding_similarity(index):
@@ -27,4 +30,3 @@ def test_embedding_similarity(index):
 
     # Проверка, что расстояние мало (эмбеддинги похожи)
     assert distance < 0.01, f"Embedding distance too high for tag '{tag}': {distance}"
-
