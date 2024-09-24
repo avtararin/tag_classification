@@ -8,10 +8,6 @@ import ast
 import json
 
 
-#как дополнить консольное приложение?
-# 1. Сделать аргумент  со словом обязательным
-# 2. что выводить в итоге название кластера и расстояние (!)
-# 3.
 def find_nearest_cluster(tag):
     # инициализация модели
     model = SentenceTransformersOnnxInference("ML/checkpoints/sentence_transformer.onnx", "ML/tokenizer")

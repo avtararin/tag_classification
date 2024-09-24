@@ -3,7 +3,6 @@ import pandas as pd
 from ML.model import SentenceTransformersOnnxInference
 from ML.distance import Meter
 
-#тесты не проходят, как грамотно импортировать модель и с какой точностью это нужно делать
 
 # Инициализация модели ONNX и загрузка эмбендингов для тестировния
 onnx_model = SentenceTransformersOnnxInference("ML/checkpoints/sentence_transformer.onnx", "ML/tokenizer")
