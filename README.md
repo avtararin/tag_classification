@@ -1,8 +1,9 @@
-# Tag classification
+# Классификация тэгов (Tag classification)
 Консольное приложение для поиска ближайшего кластера для тэга по его эмбедингу.
 
 A CLI utility that find nearest cluster for tag by its embedding.
-## Installation
+## Установка
+По инструкции ниже можно установить приложение для использования
 1. Клонируйте репозиторий
 ```commandline
 git clone https://github.com/avtararin/tag_classification.git
