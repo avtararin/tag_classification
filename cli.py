@@ -3,6 +3,9 @@ from ML.distance import Meter
 import pandas as pd
 import sys
 import argparse
+import numpy as np
+import ast
+import json
 
 
 #как дополнить консольное приложение?
@@ -12,18 +15,23 @@ import argparse
 def find_nearest_cluster(tag):
     # инициализация модели
     model = SentenceTransformersOnnxInference("ML/checkpoints/sentence_transformer.onnx", "ML/tokenizer")
-    centroids = pd.read_csv("data/kmeans_centroids.csv", sep=",").to_numpy()
+    # Чтение CSV
+    centroids = pd.read_csv('data/centroids.csv', sep=',')
+    # Преобразование строк обратно в numpy массивы
+    centroids['centroid_emb'] = centroids['centroid_emb'].apply(lambda x: np.array(json.loads(x)))
     meter = Meter()
     tag_emb = model.get_embedding(tag)
-    min_dist = meter.get_distance(tag_emb, centroids[0])
-    nearest_centroid = centroids[0]
-    for centroid in centroids:
-        distance = meter.get_distance(tag_emb, centroid)
+    min_dist = meter.get_distance(tag_emb, centroids['centroid_emb'].values[0])
+    nearest_tag_group = centroids['centroid_tag_group'].values[0]
+    nearest_centroid = centroids['centroid_emb'].values[0]
+    for index, row in centroids.iterrows():
+        distance = meter.get_distance(tag_emb, row['centroid_emb'])
         if distance < min_dist:
             min_dist = distance
-            nearest_centroid = centroid
+            nearest_centroid = row['centroid_emb']
+            nearest_tag_group = row['centroid_tag_group']
     #расстояние с каким центроидом
-    return nearest_centroid
+    return nearest_centroid, nearest_tag_group
 
 
 if __name__ == "__main__":
