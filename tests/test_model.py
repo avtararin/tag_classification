@@ -1,3 +1,4 @@
+import numpy as np
 import pytest
 import pandas as pd
 from ML.model import SentenceTransformersOnnxInference
@@ -9,7 +10,7 @@ onnx_model = SentenceTransformersOnnxInference("ML/checkpoints/sentence_transfor
 df = pd.read_csv("data/df_embs.csv", sep=',')
 
 
-@pytest.mark.parametrize("index", range(10))  # Параметризация для тестирования нескольких примеров
+@pytest.mark.parametrize("index", range(100))  # Параметризация для тестирования нескольких примеров
 def test_embedding_similarity(index):
     """
     Тест на сравнение эмбеддингов модели ONNX и сохраненного в CSV.
@@ -24,8 +25,10 @@ def test_embedding_similarity(index):
     onnx_embedding = onnx_model.get_embedding(tag)
 
     # Вычисляем косинусное расстояние между эмбеддингами
-    meter = Meter('cosine')
+    meter = Meter('euclidean')
     distance = meter.get_distance(saved_embedding, onnx_embedding[0])
 
     # Проверка, что расстояние мало (эмбеддинги похожи)
     assert distance < 0.01, f"Embedding distance too high for tag '{tag}': {distance}"
+    #assert np.allclose(saved_embedding, onnx_embedding[0]) == True
+

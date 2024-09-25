@@ -24,11 +24,11 @@ class SentenceTransformersOnnxInference:
         :param tag: Тэг для которого нужно получить эмбединг
         :return: эмбединг
         """
-        tokens = self.tokenizer(tag, return_tensors="np", padding="max_length", max_length=128, truncation=True)
+        tokens = self.tokenizer(tag,  padding=True, truncation=True, return_tensors="np")
 
         # Убедитесь, что input_ids и attention_mask имеют форму (1, sequence_length)
-        input_ids = tokens['input_ids'].astype(np.int64)
-        attention_mask = tokens['attention_mask'].astype(np.int64)
+        input_ids = tokens['input_ids']
+        attention_mask = tokens['attention_mask']
 
         onnx_inputs = {
             'input_ids': input_ids,
